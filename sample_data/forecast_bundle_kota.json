@@ -1,0 +1,23 @@
+{
+  "substation_id": "Kota East 220kV",
+  "feeder": {
+    "feeder_id": "RJ-RT-208",
+    "pv_type": "rooftop",
+    "rated_mw": 2.4,
+    "tilt_deg": 21.0,
+    "azimuth_deg": 180.0,
+    "lat": 25.18,
+    "lon": 75.83
+  },
+  "weather": [
+    {"t_amb_c": 36.0, "ghi_wm2": 790.0, "humidity_pct": 34.0, "last_rain_days": 2.0},
+    {"t_amb_c": 37.1, "ghi_wm2": 770.0, "humidity_pct": 35.0, "last_rain_days": 2.0},
+    {"t_amb_c": 38.0, "ghi_wm2": 730.0, "humidity_pct": 36.0, "last_rain_days": 2.0},
+    {"t_amb_c": 39.4, "ghi_wm2": 670.0, "humidity_pct": 38.0, "last_rain_days": 2.0},
+    {"t_amb_c": 40.6, "ghi_wm2": 610.0, "humidity_pct": 40.0, "last_rain_days": 2.0},
+    {"t_amb_c": 42.0, "ghi_wm2": 540.0, "humidity_pct": 42.0, "last_rain_days": 2.0}
+  ],
+  "base_load_mw": 468.0,
+  "ac_penetration": 0.62,
+  "n_connections": 22600
+}

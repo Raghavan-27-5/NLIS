@@ -1,0 +1,39 @@
+{
+  "substation_id": "Jaipur South 220kV",
+  "feeders": [
+    {
+      "feeder_id": "RJ-RT-001",
+      "pv_type": "rooftop",
+      "rated_mw": 0.8,
+      "tilt_deg": 20.0,
+      "azimuth_deg": 180.0,
+      "lat": 26.9,
+      "lon": 75.8
+    },
+    {
+      "feeder_id": "RJ-KUSUM-001",
+      "pv_type": "kusum_c",
+      "rated_mw": 2.0,
+      "tilt_deg": 18.0,
+      "azimuth_deg": 180.0,
+      "lat": 26.9,
+      "lon": 75.8
+    }
+  ],
+  "weather": [
+    {"t_amb_c": 34.0, "ghi_wm2": 850.0, "humidity_pct": 30.0, "last_rain_days": 2.0},
+    {"t_amb_c": 35.2, "ghi_wm2": 820.0, "humidity_pct": 32.0, "last_rain_days": 2.0},
+    {"t_amb_c": 36.8, "ghi_wm2": 780.0, "humidity_pct": 34.0, "last_rain_days": 2.0},
+    {"t_amb_c": 38.1, "ghi_wm2": 710.0, "humidity_pct": 36.0, "last_rain_days": 2.0},
+    {"t_amb_c": 39.5, "ghi_wm2": 640.0, "humidity_pct": 38.0, "last_rain_days": 2.0},
+    {"t_amb_c": 41.0, "ghi_wm2": 520.0, "humidity_pct": 40.0, "last_rain_days": 2.0}
+  ],
+  "base_load_mw": 435.0,
+  "ac_penetration": 0.58,
+  "n_connections": 20000,
+  "topo_features": {
+    "elevation_m": 1200.0,
+    "slope_deg": 10.0,
+    "aspect_deg": 180.0
+  }
+}

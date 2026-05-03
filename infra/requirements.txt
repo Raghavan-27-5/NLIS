@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+numpy
+scipy
+scikit-learn
+pytest
+httpx
+pydantic

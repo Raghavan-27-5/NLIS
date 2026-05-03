@@ -1,0 +1,23 @@
+{
+  "substation_id": "Jodhpur North 132kV",
+  "feeder": {
+    "feeder_id": "RJ-KUSUM-014",
+    "pv_type": "kusum_c",
+    "rated_mw": 1.8,
+    "tilt_deg": 19.0,
+    "azimuth_deg": 180.0,
+    "lat": 26.28,
+    "lon": 73.02
+  },
+  "weather": [
+    {"t_amb_c": 39.0, "ghi_wm2": 740.0, "humidity_pct": 28.0, "last_rain_days": 1.0},
+    {"t_amb_c": 40.4, "ghi_wm2": 720.0, "humidity_pct": 30.0, "last_rain_days": 1.0},
+    {"t_amb_c": 41.8, "ghi_wm2": 690.0, "humidity_pct": 31.5, "last_rain_days": 1.0},
+    {"t_amb_c": 43.0, "ghi_wm2": 640.0, "humidity_pct": 33.0, "last_rain_days": 1.0},
+    {"t_amb_c": 44.2, "ghi_wm2": 580.0, "humidity_pct": 35.0, "last_rain_days": 1.0},
+    {"t_amb_c": 45.0, "ghi_wm2": 510.0, "humidity_pct": 37.0, "last_rain_days": 1.0}
+  ],
+  "base_load_mw": 402.0,
+  "ac_penetration": 0.54,
+  "n_connections": 17800
+}
