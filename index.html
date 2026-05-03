@@ -281,7 +281,40 @@
   /* CHART CONTAINER */
   .chart-container { position: relative; width: 100%; }
 
-  canvas { display: block; }
+  .chart-frame {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    min-height: 200px;
+    max-height: 200px;
+    overflow: hidden;
+  }
+
+  .chart-frame.tall {
+    height: 220px;
+    min-height: 220px;
+    max-height: 220px;
+  }
+
+  .chart-frame.medium {
+    height: 180px;
+    min-height: 180px;
+    max-height: 180px;
+  }
+
+  .chart-frame.short {
+    height: 160px;
+    min-height: 160px;
+    max-height: 160px;
+  }
+
+  canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100%;
+    max-height: 100%;
+  }
 
   /* ARCHITECTURE DIAGRAM */
   .arch-grid {
@@ -696,7 +729,9 @@
             <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--accent)">- - Forecast</span>
           </div>
         </div>
-        <canvas id="mainChart" height="200"></canvas>
+        <div class="chart-frame">
+          <canvas id="mainChart"></canvas>
+        </div>
       </div>
 
       <!-- SECONDARY CHARTS -->
@@ -706,14 +741,18 @@
             <div class="card-title">DRE Components (MW)</div>
             <span class="card-tag tag-solar">SOLAR</span>
           </div>
-          <canvas id="dreChart" height="160"></canvas>
+          <div class="chart-frame short">
+            <canvas id="dreChart"></canvas>
+          </div>
         </div>
         <div class="card">
           <div class="card-header">
             <div class="card-title">Cooling Load Decomposition</div>
             <span class="card-tag tag-load">AC DEMAND</span>
           </div>
-          <canvas id="coolingChart" height="160"></canvas>
+          <div class="chart-frame short">
+            <canvas id="coolingChart"></canvas>
+          </div>
         </div>
       </div>
 
@@ -937,14 +976,18 @@ D_net(t) = D_gross(t) − P_DRE(t)<br>
             <div class="card-title">DRE Forecast vs Actual (48h)</div>
             <span class="card-tag tag-solar">PVLIB</span>
           </div>
-          <canvas id="dreDetailChart" height="200"></canvas>
+          <div class="chart-frame">
+            <canvas id="dreDetailChart"></canvas>
+          </div>
         </div>
         <div class="card">
           <div class="card-header">
             <div class="card-title">GHI Uncertainty Bands (P10/P50/P90)</div>
             <span class="card-tag tag-grid">ENSEMBLE</span>
           </div>
-          <canvas id="ghiChart" height="200"></canvas>
+          <div class="chart-frame">
+            <canvas id="ghiChart"></canvas>
+          </div>
         </div>
       </div>
 
@@ -1042,14 +1085,18 @@ D_net(t) = D_gross(t) − P_DRE(t)<br>
             <div class="card-title">Temperature–Load Relationship (Non-linear)</div>
             <span class="card-tag tag-load">THRESHOLD ~24°C</span>
           </div>
-          <canvas id="tempLoadChart" height="200"></canvas>
+          <div class="chart-frame">
+            <canvas id="tempLoadChart"></canvas>
+          </div>
         </div>
         <div class="card">
           <div class="card-header">
             <div class="card-title">AC Penetration Growth Curve</div>
             <span class="card-tag tag-warn">NON-STATIONARY</span>
           </div>
-          <canvas id="acPenChart" height="200"></canvas>
+          <div class="chart-frame">
+            <canvas id="acPenChart"></canvas>
+          </div>
         </div>
       </div>
 
@@ -1097,7 +1144,9 @@ f_thermal = 1 − exp(−t/τ_thermal)<br>
           <div class="card-title">Net Grid Demand — Day-Ahead Schedule (P10 / P50 / P90)</div>
           <span class="card-tag tag-net">PROCUREMENT READY</span>
         </div>
-        <canvas id="netDemandChart" height="220"></canvas>
+        <div class="chart-frame tall">
+          <canvas id="netDemandChart"></canvas>
+        </div>
       </div>
 
       <div class="grid-3">
@@ -1106,21 +1155,27 @@ f_thermal = 1 − exp(−t/τ_thermal)<br>
             <div class="card-title">Duck Curve Effect</div>
             <span class="card-tag tag-warn">RAMP RISK</span>
           </div>
-          <canvas id="duckChart" height="180"></canvas>
+          <div class="chart-frame medium">
+            <canvas id="duckChart"></canvas>
+          </div>
         </div>
         <div class="card">
           <div class="card-header">
             <div class="card-title">DSM Band Exposure</div>
             <span class="card-tag tag-alert">₹ RISK</span>
           </div>
-          <canvas id="dsmChart" height="180"></canvas>
+          <div class="chart-frame medium">
+            <canvas id="dsmChart"></canvas>
+          </div>
         </div>
         <div class="card">
           <div class="card-header">
             <div class="card-title">Ramp Rate Forecast</div>
             <span class="card-tag tag-warn">MW/15min</span>
           </div>
-          <canvas id="rampChart" height="180"></canvas>
+          <div class="chart-frame medium">
+            <canvas id="rampChart"></canvas>
+          </div>
         </div>
       </div>
 
@@ -1226,7 +1281,9 @@ f_thermal = 1 − exp(−t/τ_thermal)<br>
           <div class="card-title">Backtest MAPE Distribution (Jan 2024 – Apr 2026, 15-min, Net Demand)</div>
           <span class="card-tag tag-net">N=63,072 INTERVALS</span>
         </div>
-        <canvas id="mapeDistChart" height="180"></canvas>
+        <div class="chart-frame medium">
+          <canvas id="mapeDistChart"></canvas>
+        </div>
       </div>
 
       <div class="grid-2">
@@ -1234,13 +1291,17 @@ f_thermal = 1 − exp(−t/τ_thermal)<br>
           <div class="card-header">
             <div class="card-title">Model Ensemble Weights (Day-ahead)</div>
           </div>
-          <canvas id="ensembleChart" height="200"></canvas>
+          <div class="chart-frame">
+            <canvas id="ensembleChart"></canvas>
+          </div>
         </div>
         <div class="card">
           <div class="card-header">
             <div class="card-title">DSM Penalty Savings (vs Naïve Forecast)</div>
           </div>
-          <canvas id="dsmSavingsChart" height="200"></canvas>
+          <div class="chart-frame">
+            <canvas id="dsmSavingsChart"></canvas>
+          </div>
         </div>
       </div>
 
@@ -1509,12 +1570,33 @@ function hexGrad(ctx, hex, a1 = 0.25, a2 = 0.0) {
 
 // ─── LOAD CHARTJS ──────────────────────────────────────────────────
 
-const script = document.createElement('script');
-script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';
-script.onload = initCharts;
-document.head.appendChild(script);
+let chartsInitialized = false;
+let chartLoaderStarted = false;
+
+function loadCharts() {
+  if (chartsInitialized || chartLoaderStarted) {
+    return;
+  }
+  chartLoaderStarted = true;
+  if (window.Chart) {
+    initCharts();
+    return;
+  }
+
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';
+  script.onload = initCharts;
+  script.onerror = () => {
+    chartLoaderStarted = false;
+  };
+  document.head.appendChild(script);
+}
 
 function initCharts() {
+  if (chartsInitialized || !window.Chart) {
+    return;
+  }
+  chartsInitialized = true;
 
   // ── MAIN CHART ──
   const mainCtx = document.getElementById('mainChart').getContext('2d');
@@ -1865,7 +1947,9 @@ function updateClock() {
     }
   });
 }
+updateClock();
 setInterval(updateClock, 1000);
+loadCharts();
 </script>
 </body>
 </html>
