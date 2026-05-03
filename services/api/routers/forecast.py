@@ -118,7 +118,9 @@ def forecast(request: ForecastRequest) -> dict[str, Any]:
 @router.get("/bundle/raw")
 def bundle_raw(path: str = Query(..., description="Path to a JSON forecast bundle")) -> dict[str, Any]:
     bundle: ForecastBundle = load_forecast_bundle_json(_resolve_demo_path(path))
-    return {"path": path, **asdict(bundle)}
+    body = {"path": path, **asdict(bundle)}
+    body["feeder"] = asdict(bundle.feeder)
+    return body
 
 
 @router.get("/bundle/preview")

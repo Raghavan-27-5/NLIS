@@ -56,10 +56,10 @@ def test_ui_app_js_uses_api_routes_and_live_edit_controls():
     assert "acShift" in response.text
     assert "loadShift" in response.text
     assert "refreshForecastBtn" in response.text
-    assert str(WEATHER) in response.text
-    assert str(BUNDLE) in response.text
-    assert str(BUNDLE_JODHPUR) in response.text
-    assert str(BUNDLE_KOTA) in response.text
+    assert "weather_sample.csv" in response.text
+    assert "forecast_bundle.json" in response.text
+    assert "forecast_bundle_jodhpur.json" in response.text
+    assert "forecast_bundle_kota.json" in response.text
 
 
 def test_ui_app_js_defines_band_status_before_use():
