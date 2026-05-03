@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRIDMIND — DISCOM AI Forecasting Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07090f;
+    --surface: #0d1117;
+    --surface2: #131a24;
+    --surface3: #1a2332;
+    --border: #1e2d3d;
+    --border2: #253545;
+    --accent: #00d4ff;
+    --accent2: #ff6b35;
+    --accent3: #39d353;
+    --accent4: #f7c948;
+    --accent5: #b48eff;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #4a6080;
+    --danger: #ff4757;
+    --warn: #ffa502;
+    --solar: #ffd32a;
+    --grid: #00d4ff;
+    --net: #39d353;
+    --load: #ff6b35;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    height: 56px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+
+  .logo span { color: var(--text2); font-weight: 400; font-size: 12px; letter-spacing: 0.15em; margin-left: 12px; font-family: 'IBM Plex Mono', monospace; }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text2);
+  }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent3);
+    box-shadow: 0 0 8px var(--accent3);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .btn {
+    padding: 6px 16px;
+    border-radius: 4px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    border: 1px solid var(--border2);
+    background: var(--surface2);
+    color: var(--text);
+    transition: all 0.15s;
+  }
+
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .btn.primary:hover { background: #00b8e0; }
+
+  /* LAYOUT */
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr 300px;
+    height: calc(100vh - 56px);
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 16px 0;
+  }
+
+  .sidebar-section {
+    padding: 8px 16px 4px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-top: 12px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    cursor: pointer;
+    color: var(--text2);
+    font-size: 12px;
+    transition: all 0.1s;
+    border-left: 2px solid transparent;
+  }
+
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: var(--surface2); color: var(--accent); border-left-color: var(--accent); }
+
+  .nav-icon { font-size: 14px; width: 18px; text-align: center; }
+
+  .sidebar-metric {
+    margin: 8px 12px;
+    padding: 10px 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+
+  .sm-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; }
+  .sm-value { font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 500; margin-top: 2px; }
+  .sm-sub { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+  /* MAIN CONTENT */
+  .main {
+    overflow-y: auto;
+    padding: 20px;
+    background: var(--bg);
+  }
+
+  /* TABS */
+  .tab-bar {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+  }
+
+  .tab {
+    padding: 8px 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    color: var(--text3);
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    margin-bottom: -1px;
+  }
+
+  .tab:hover { color: var(--text2); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+
+  .card-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .tag-solar { background: rgba(255, 211, 42, 0.1); color: var(--solar); border: 1px solid rgba(255, 211, 42, 0.25); }
+  .tag-grid { background: rgba(0, 212, 255, 0.1); color: var(--grid); border: 1px solid rgba(0, 212, 255, 0.25); }
+  .tag-net { background: rgba(57, 211, 83, 0.1); color: var(--net); border: 1px solid rgba(57, 211, 83, 0.25); }
+  .tag-load { background: rgba(255, 107, 53, 0.1); color: var(--load); border: 1px solid rgba(255, 107, 53, 0.25); }
+  .tag-alert { background: rgba(255, 71, 87, 0.1); color: var(--danger); border: 1px solid rgba(255, 71, 87, 0.25); }
+  .tag-warn { background: rgba(255, 165, 2, 0.1); color: var(--warn); border: 1px solid rgba(255, 165, 2, 0.25); }
+  .tag-ok { background: rgba(57, 211, 83, 0.1); color: var(--net); border: 1px solid rgba(57, 211, 83, 0.25); }
+
+  /* METRICS ROW */
+  .metrics-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .metric-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .metric-card.solar::before { background: var(--solar); }
+  .metric-card.grid::before { background: var(--grid); }
+  .metric-card.net::before { background: var(--net); }
+  .metric-card.load::before { background: var(--load); }
+
+  .metric-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.12em; }
+  .metric-value { font-family: 'IBM Plex Mono', monospace; font-size: 28px; font-weight: 500; margin: 6px 0 4px; line-height: 1; }
+  .metric-value.solar { color: var(--solar); }
+  .metric-value.grid { color: var(--grid); }
+  .metric-value.net { color: var(--net); }
+  .metric-value.load { color: var(--load); }
+  .metric-unit { font-size: 13px; color: var(--text3); }
+  .metric-delta { font-size: 11px; display: flex; align-items: center; gap: 4px; }
+  .delta-up { color: var(--accent3); }
+  .delta-down { color: var(--danger); }
+  .metric-sub { font-size: 10px; color: var(--text3); }
+
+  /* CHART CONTAINER */
+  .chart-container { position: relative; width: 100%; }
+
+  canvas { display: block; }
+
+  /* ARCHITECTURE DIAGRAM */
+  .arch-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .arch-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px;
+    position: relative;
+  }
+
+  .arch-block-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+  }
+
+  .arch-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text2);
+  }
+
+  .arch-item:last-child { border-bottom: none; }
+  .arch-bullet { width: 4px; height: 4px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+
+  /* TABLE */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .data-table th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+
+  .data-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+  }
+
+  .data-table tr:hover td { background: var(--surface2); }
+
+  /* FORMULA */
+  .formula-block {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 12px 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    margin: 8px 0;
+    line-height: 1.8;
+  }
+
+  .formula-comment { color: var(--text3); font-size: 10px; }
+
+  /* RIGHT PANEL */
+  .right-panel {
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  .panel-section { margin-bottom: 20px; }
+  .panel-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .weather-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+  }
+
+  .weather-label { color: var(--text3); font-family: 'IBM Plex Mono', monospace; font-size: 10px; }
+  .weather-val { font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
+
+  .alert-item {
+    padding: 8px 10px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    border: 1px solid;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .alert-item.danger { background: rgba(255,71,87,0.08); border-color: rgba(255,71,87,0.3); color: var(--danger); }
+  .alert-item.warn { background: rgba(255,165,2,0.08); border-color: rgba(255,165,2,0.3); color: var(--warn); }
+  .alert-item.ok { background: rgba(57,211,83,0.08); border-color: rgba(57,211,83,0.3); color: var(--net); }
+
+  .alert-time { font-family: 'IBM Plex Mono', monospace; font-size: 9px; opacity: 0.7; }
+
+  .progress-bar-wrap { margin-bottom: 10px; }
+  .pb-header { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 10px; color: var(--text2); }
+  .pb-track { height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+  .pb-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+
+  .model-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    margin: 2px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text2);
+  }
+
+  .horizon-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .horizon-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px;
+  }
+
+  .hc-horizon { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text3); text-transform: uppercase; }
+  .hc-mape { font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 500; color: var(--accent); margin: 4px 0; }
+  .hc-desc { font-size: 10px; color: var(--text3); }
+
+  .separator {
+    height: 1px;
+    background: var(--border);
+    margin: 16px 0;
+  }
+
+  /* PIPELINE VIZ */
+  .pipeline {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin: 12px 0;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .pipeline-stage {
+    flex: 1;
+    min-width: 110px;
+    padding: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-right: none;
+    text-align: center;
+    position: relative;
+  }
+
+  .pipeline-stage:first-child { border-radius: 4px 0 0 4px; }
+  .pipeline-stage:last-child { border-radius: 0 4px 4px 0; border-right: 1px solid var(--border); }
+
+  .pipeline-stage::after {
+    content: '→';
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text3);
+    font-size: 12px;
+    z-index: 1;
+  }
+
+  .pipeline-stage:last-child::after { display: none; }
+
+  .ps-icon { font-size: 18px; margin-bottom: 4px; }
+  .ps-label { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 2px; }
+  .ps-name { font-size: 11px; color: var(--text); font-weight: 500; }
+
+  /* SCROLL */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  /* GRID 2 COL */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+  /* SUBSTATION LIST */
+  .sub-row {
+    display: grid;
+    grid-template-columns: 1fr 70px 70px 70px 60px;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    gap: 8px;
+  }
+
+  .sub-name { color: var(--text); font-weight: 500; }
+  .sub-val { font-family: 'IBM Plex Mono', monospace; color: var(--text2); text-align: right; }
+  .sub-err { font-family: 'IBM Plex Mono', monospace; text-align: right; }
+  .err-good { color: var(--net); }
+  .err-bad { color: var(--danger); }
+  .err-mid { color: var(--warn); }
+
+  .inline-bar {
+    height: 3px;
+    border-radius: 1px;
+    margin-top: 3px;
+  }
+
+  /* TABS CONTENT */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* RESPONSIVE FIX */
+  @media (max-width: 1200px) {
+    .layout { grid-template-columns: 200px 1fr; }
+    .right-panel { display: none; }
+  }
+
+  /* EQUATION BLOCK */
+  .eq-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px;
+    margin: 8px 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    line-height: 2;
+  }
+
+  .eq-var { color: var(--accent5); }
+  .eq-op { color: var(--text3); }
+  .eq-val { color: var(--accent4); }
+  .eq-label { color: var(--text3); font-size: 10px; }
+
+  .chip {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    margin: 1px;
+    background: var(--surface3);
+    border: 1px solid var(--border2);
+    color: var(--text2);
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div style="display:flex;align-items:center;gap:16px">
+    <div class="logo">GRIDMIND <span>DISCOM AI FORECASTING v2.4</span></div>
+  </div>
+  <div class="header-right">
+    <div class="status-pill">
+      <div class="status-dot"></div>
+      LIVE · IST 14:37
+    </div>
+    <div class="status-pill">
+      <span style="color:var(--solar)">◆</span>
+      RAJASTHAN DISCOM
+    </div>
+    <button class="btn primary">↻ RUN FORECAST</button>
+    <button class="btn">EXPORT</button>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">Navigation</div>
+    <div class="nav-item active" onclick="showTab('overview')"><span class="nav-icon">◈</span>Overview</div>
+    <div class="nav-item" onclick="showTab('architecture')"><span class="nav-icon">⬡</span>Architecture</div>
+    <div class="nav-item" onclick="showTab('dre')"><span class="nav-icon">☀</span>DRE Generation</div>
+    <div class="nav-item" onclick="showTab('demand')"><span class="nav-icon">⚡</span>Demand Model</div>
+    <div class="nav-item" onclick="showTab('net')"><span class="nav-icon">≋</span>Net Grid Demand</div>
+    <div class="nav-item" onclick="showTab('substations')"><span class="nav-icon">◫</span>Substations</div>
+    <div class="nav-item" onclick="showTab('validation')"><span class="nav-icon">✓</span>Validation</div>
+
+    <div class="sidebar-section">Live KPIs</div>
+
+    <div class="sidebar-metric">
+      <div class="sm-label">Net Demand (Now)</div>
+      <div class="sm-value" style="color:var(--net)">4,218 <span style="font-size:12px;color:var(--text3)">MW</span></div>
+      <div class="sm-sub">↓ 312 MW vs forecast</div>
+    </div>
+
+    <div class="sidebar-metric">
+      <div class="sm-label">DRE Contribution</div>
+      <div class="sm-value" style="color:var(--solar)">1,847 <span style="font-size:12px;color:var(--text3)">MW</span></div>
+      <div class="sm-sub">↑ 29.4% of gross load</div>
+    </div>
+
+    <div class="sidebar-metric">
+      <div class="sm-label">Forecast MAPE (T+1h)</div>
+      <div class="sm-value" style="color:var(--accent)">1.87<span style="font-size:12px;color:var(--text3)">%</span></div>
+      <div class="sm-sub">Target: &lt;3.0%</div>
+    </div>
+
+    <div class="sidebar-metric">
+      <div class="sm-label">DSM Exposure (Est.)</div>
+      <div class="sm-value" style="color:var(--warn)">₹2.1<span style="font-size:12px;color:var(--text3)">L</span></div>
+      <div class="sm-sub">Rolling 24h</div>
+    </div>
+
+    <div class="sidebar-section">Horizon Status</div>
+    <div style="padding: 0 12px;">
+      <div class="progress-bar-wrap" style="margin-top:8px">
+        <div class="pb-header"><span>15-min</span><span style="color:var(--net)">MAPE 1.2%</span></div>
+        <div class="pb-track"><div class="pb-fill" style="width:92%;background:var(--net)"></div></div>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="pb-header"><span>1-hour</span><span style="color:var(--net)">MAPE 1.9%</span></div>
+        <div class="pb-track"><div class="pb-fill" style="width:85%;background:var(--net)"></div></div>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="pb-header"><span>Day-ahead</span><span style="color:var(--accent4)">MAPE 3.8%</span></div>
+        <div class="pb-track"><div class="pb-fill" style="width:70%;background:var(--accent4)"></div></div>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="pb-header"><span>Week-ahead</span><span style="color:var(--warn)">MAPE 6.1%</span></div>
+        <div class="pb-track"><div class="pb-fill" style="width:55%;background:var(--warn)"></div></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- OVERVIEW TAB -->
+    <div id="tab-overview" class="tab-content active">
+      <div class="tab-bar">
+        <div class="tab active" onclick="switchMainTab(this,'overview')">LIVE DASHBOARD</div>
+        <div class="tab" onclick="switchMainTab(this,'overview')">PROCUREMENT</div>
+        <div class="tab" onclick="switchMainTab(this,'overview')">DSM ANALYTICS</div>
+      </div>
+
+      <div class="metrics-row">
+        <div class="metric-card load">
+          <div class="metric-label">Gross Load (Actual)</div>
+          <div class="metric-value load">6,065 <span class="metric-unit">MW</span></div>
+          <div class="metric-delta"><span class="delta-up">↑ 8.2%</span> <span style="color:var(--text3)">vs yesterday 14:30</span></div>
+          <div class="metric-sub" style="margin-top:4px">Peak: 6,412 MW @ 13:45</div>
+        </div>
+        <div class="metric-card solar">
+          <div class="metric-label">DRE Generation</div>
+          <div class="metric-value solar">1,847 <span class="metric-unit">MW</span></div>
+          <div class="metric-delta"><span class="delta-up">↑ Rooftop: 623 MW</span></div>
+          <div class="metric-sub" style="margin-top:4px">KUSUM Feeder: 1,224 MW</div>
+        </div>
+        <div class="metric-card net">
+          <div class="metric-label">Net Grid Demand</div>
+          <div class="metric-value net">4,218 <span class="metric-unit">MW</span></div>
+          <div class="metric-delta"><span class="delta-down">↓ vs T+1h fcst: −312 MW</span></div>
+          <div class="metric-sub" style="margin-top:4px">Penetration: 30.5% DRE</div>
+        </div>
+        <div class="metric-card grid">
+          <div class="metric-label">Schedule Deviation</div>
+          <div class="metric-value grid">+196 <span class="metric-unit">MW</span></div>
+          <div class="metric-delta"><span class="delta-up">↓ DSM risk: LOW</span></div>
+          <div class="metric-sub" style="margin-top:4px">UI: 49.98 Hz · Band II</div>
+        </div>
+      </div>
+
+      <!-- MAIN CHART -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Net Grid Demand — Forecast vs Actual (Today, 15-min resolution)</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--load)">■ Gross Load</span>
+            <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--solar)">■ DRE Gen</span>
+            <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--net)">■ Net Demand</span>
+            <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--accent)">- - Forecast</span>
+          </div>
+        </div>
+        <canvas id="mainChart" height="200"></canvas>
+      </div>
+
+      <!-- SECONDARY CHARTS -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">DRE Components (MW)</div>
+            <span class="card-tag tag-solar">SOLAR</span>
+          </div>
+          <canvas id="dreChart" height="160"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Cooling Load Decomposition</div>
+            <span class="card-tag tag-load">AC DEMAND</span>
+          </div>
+          <canvas id="coolingChart" height="160"></canvas>
+        </div>
+      </div>
+
+      <!-- FORMULA SECTION -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Core Model Equations</div>
+          <span class="card-tag tag-grid">PHYSICS + ML</span>
+        </div>
+        <div class="grid-3">
+          <div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:6px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:0.1em">DRE Generation</div>
+            <div class="formula-block">
+P_DRE(t) = Σᵢ [η_i · A_i · GHI_eff(t,loc_i)<br>
+            · f_temp(T_cell_i) · f_cloud(τ_i,t)<br>
+            · f_aging(yr_i) · f_degrade(t)]<br>
+<span class="formula-comment"># GHI_eff = DNI·cos(θ) + DHI + GRI<br># f_temp = 1 + γ·(T_cell − 25°C)<br># T_cell = T_amb + (NOCT−20)/800 · GHI</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:6px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:0.1em">Cooling Load</div>
+            <div class="formula-block">
+L_AC(t) = α · P_AC · N_AC(t)<br>
+         · COP_adj(T,RH) · OccRate(t)<br>
+         · ThermalMass(bldg_type)<br>
+<span class="formula-comment"># N_AC(t) = N_base + ΔN(t) [non-stationary]<br># α = penetration × usage rate<br># COP degrades: ΔCOP/°C ≈ −0.03</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:6px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:0.1em">Net Grid Demand</div>
+            <div class="formula-block">
+D_net(t) = D_gross(t) − P_DRE(t)<br>
+         + δ_transmission_loss<br>
+         − P_bess(t)  [if any storage]<br>
+<span class="formula-comment"># D_gross = BaseLoad + L_AC + L_industrial<br>#         + L_agriculture + L_commercial<br># δ = f(voltage, topology)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARCHITECTURE TAB -->
+    <div id="tab-architecture" class="tab-content">
+      <div class="tab-bar">
+        <div class="tab active">SYSTEM DESIGN</div>
+        <div class="tab">DATA FLOWS</div>
+        <div class="tab">DEPLOYMENT</div>
+      </div>
+
+      <!-- PIPELINE -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">End-to-End Forecasting Pipeline</div>
+          <span class="card-tag tag-grid">PRODUCTION</span>
+        </div>
+        <div class="pipeline">
+          <div class="pipeline-stage">
+            <div class="ps-icon">🛰</div>
+            <div class="ps-label">Layer 1</div>
+            <div class="ps-name">Weather Intelligence</div>
+          </div>
+          <div class="pipeline-stage">
+            <div class="ps-icon">☀</div>
+            <div class="ps-label">Layer 2</div>
+            <div class="ps-name">DRE Physics Model</div>
+          </div>
+          <div class="pipeline-stage">
+            <div class="ps-icon">🏘</div>
+            <div class="ps-label">Layer 3</div>
+            <div class="ps-name">Demand Modelling</div>
+          </div>
+          <div class="pipeline-stage">
+            <div class="ps-icon">🤖</div>
+            <div class="ps-label">Layer 4</div>
+            <div class="ps-name">ML Ensemble</div>
+          </div>
+          <div class="pipeline-stage">
+            <div class="ps-icon">⚡</div>
+            <div class="ps-label">Layer 5</div>
+            <div class="ps-name">Net Demand Fusion</div>
+          </div>
+          <div class="pipeline-stage">
+            <div class="ps-icon">📊</div>
+            <div class="ps-label">Layer 6</div>
+            <div class="ps-name">SCADA / SLDC API</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ARCH BLOCKS -->
+      <div class="arch-grid">
+        <div class="arch-block">
+          <div class="arch-block-title" style="color:var(--accent)">🛰 Weather Intelligence Layer</div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--accent)"></div><div><b>NWP Sources:</b> NCUM (IMD, 12km), ERA5 reanalysis, ECMWF IFS global</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--accent)"></div><div><b>Downscaling:</b> WRF 3km mesoscale + statistical bias correction via quantile mapping</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--accent)"></div><div><b>Satellite:</b> INSAT-3DR 15-min cloud optical depth → GHI derivation via Heliosat-2</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--accent)"></div><div><b>Station assimilation:</b> 847 AWS stations + DISCOM AMR weather sensors via Kalman update</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--accent)"></div><div><b>Micro-climate:</b> Urban heat island correction for city feeders; elevation lapse rate for Rajasthan terrain</div></div>
+        </div>
+
+        <div class="arch-block">
+          <div class="arch-block-title" style="color:var(--solar)">☀ DRE Generation Module</div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--solar)"></div><div><b>Rooftop Solar:</b> Net-metering database (RERC) × panel efficiency × shadow map (LiDAR)</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--solar)"></div><div><b>KUSUM-C Feeders:</b> Plant-level GIS registry × physics PVLib × real-time inverter telemetry</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--solar)"></div><div><b>Unmetered proxy:</b> Satellite irradiance × installed capacity density (GIS) for missing AMR</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--solar)"></div><div><b>Degradation:</b> Annual 0.5% linear + stochastic soiling (dust index: MERRA-2 aerosol AOD)</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--solar)"></div><div><b>Uncertainty:</b> Monte Carlo ensemble (N=1000) over GHI uncertainty → P10/P50/P90 bands</div></div>
+        </div>
+
+        <div class="arch-block">
+          <div class="arch-block-title" style="color:var(--load)">⚡ Demand Forecasting Module</div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--load)"></div><div><b>Cooling load:</b> Temperature-elasticity curve + AC penetration time series (non-stationary)</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--load)"></div><div><b>Agriculture:</b> Crop calendar × groundwater pumping schedules per mandal</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--load)"></div><div><b>Industrial:</b> CEIG-registered HT/EHT consumer schedules + holiday calendar</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--load)"></div><div><b>Base load:</b> LSTM-based with calendar + weather features; 15-min resolution</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--load)"></div><div><b>Asymmetric loss:</b> CRPS-minimizing quantile regression; penalty asymmetry per DSM slab</div></div>
+        </div>
+
+        <div class="arch-block">
+          <div class="arch-block-title" style="color:var(--accent5)">🤖 ML Ensemble Architecture</div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--accent5)"></div><div><b>Short-term (≤1h):</b> Online learning XGBoost + gradient-boosted residual correction on latest actuals</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--accent5)"></div><div><b>Intra-day (1–24h):</b> Transformer (PatchTST) + Temporal Fusion Transformer with covariate injection</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--accent5)"></div><div><b>Day-ahead:</b> Physics hybrid: PVLib output → XGBoost error correction (post-processing)</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--accent5)"></div><div><b>Stacking:</b> Bayesian model combination with time-varying weights per regime × hour-of-day</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--accent5)"></div><div><b>Conformal prediction:</b> Coverage-guaranteed intervals replacing naive PI; exchangeability via stratified calibration</div></div>
+        </div>
+
+        <div class="arch-block">
+          <div class="arch-block-title" style="color:var(--net)">≋ Net Demand Fusion</div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--net)"></div><div><b>Identity:</b> D_net = D_gross − P_DRE + δ_losses; error propagation via Taylor expansion</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--net)"></div><div><b>Covariance:</b> Weather drives both supply and demand — joint uncertainty via copula (not independent)</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--net)"></div><div><b>Spatial:</b> Substation-level forecast with feeder-topology-aware aggregation (not simple sum)</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--net)"></div><div><b>Ramp alerts:</b> Net load ramp > 200 MW/15min triggers early warning to SLDC 2h ahead</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--net)"></div><div><b>Anti-gaming:</b> Real-time actuals from SCADA close feedback loop; bias correction auto-updates</div></div>
+        </div>
+
+        <div class="arch-block">
+          <div class="arch-block-title" style="color:var(--accent2)">◫ Substation Intelligence</div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--accent2)"></div><div><b>Spatial resolution:</b> 33/11 kV substation level; ≤5 MW aggregation error per zone</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--accent2)"></div><div><b>GIS integration:</b> Consumer GIS + DRE GIS → feeder-level DRE attribution</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--accent2)"></div><div><b>DT-level:</b> Distribution transformer level for feeders with >5% DRE penetration</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--accent2)"></div><div><b>Data gaps:</b> AMRSS coverage <60% → proxy via spatial interpolation + peer substation regression</div></div>
+          <div class="arch-item"><div class="arch-bullet" style="background:var(--accent2)"></div><div><b>Output:</b> JSON schedule packets to SCADA + REST API to SLDC scheduling portal</div></div>
+        </div>
+      </div>
+
+      <!-- CRITICAL ENGINEERING DECISIONS -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Critical Engineering Decisions & Failure Mode Mitigations</div>
+          <span class="card-tag tag-alert">ADVERSARIAL REVIEW</span>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Failure Mode</th>
+              <th>Risk</th>
+              <th>Mitigation Implemented</th>
+              <th>Residual Risk</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Missing AMR on KUSUM feeders</td>
+              <td><span class="card-tag tag-alert">HIGH</span></td>
+              <td>Satellite GHI proxy × capacity density; validated against sampled meters MAPE <8%</td>
+              <td>±8% unmetered capacity</td>
+            </tr>
+            <tr>
+              <td>AC penetration non-stationarity</td>
+              <td><span class="card-tag tag-alert">HIGH</span></td>
+              <td>Quarterly calibration from billing data; consumer survey correction factor</td>
+              <td>Lagged by one quarter</td>
+            </tr>
+            <tr>
+              <td>Weather forecast error propagation</td>
+              <td><span class="card-tag tag-warn">MED</span></td>
+              <td>Joint copula uncertainty; P10/P50/P90 Net Demand schedule</td>
+              <td>Correlated error tail risk</td>
+            </tr>
+            <tr>
+              <td>SCADA data drops / bad data</td>
+              <td><span class="card-tag tag-warn">MED</span></td>
+              <td>Anomaly detection (3σ clip) + neighbor interpolation + model fallback</td>
+              <td>Detection lag ~3 min</td>
+            </tr>
+            <tr>
+              <td>Sudden cloud events (ramps)</td>
+              <td><span class="card-tag tag-warn">MED</span></td>
+              <td>INSAT-3DR cloud motion vectors for 15-min nowcasting; ramp alert SLA 30min</td>
+              <td>Optical depth uncertainty</td>
+            </tr>
+            <tr>
+              <td>DSM asymmetric penalty ignored</td>
+              <td><span class="card-tag tag-alert">HIGH</span></td>
+              <td>Custom CRPS loss with DSM band pricing as cost weights; band-aware schedule</td>
+              <td>DSM rule changes</td>
+            </tr>
+            <tr>
+              <td>Agricultural load uncertainty</td>
+              <td><span class="card-tag tag-warn">MED</span></td>
+              <td>DISCOM feeder-wise pumping schedules + groundwater sensor integration</td>
+              <td>Unscheduled pump load</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- DRE TAB -->
+    <div id="tab-dre" class="tab-content">
+      <div class="tab-bar">
+        <div class="tab active">DRE MODEL SPEC</div>
+        <div class="tab">KUSUM FEEDERS</div>
+        <div class="tab">ROOFTOP SOLAR</div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">DRE Forecast vs Actual (48h)</div>
+            <span class="card-tag tag-solar">PVLIB</span>
+          </div>
+          <canvas id="dreDetailChart" height="200"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">GHI Uncertainty Bands (P10/P50/P90)</div>
+            <span class="card-tag tag-grid">ENSEMBLE</span>
+          </div>
+          <canvas id="ghiChart" height="200"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">PVLib Physics Chain — Production Implementation</div>
+          <span class="card-tag tag-solar">PYTHON · PVLIB</span>
+        </div>
+        <div class="eq-block">
+<span class="eq-label"># Step 1: Solar position (ephemeris)</span><br>
+<span class="eq-var">solar_pos</span> <span class="eq-op">=</span> pvlib.solarposition.<span class="eq-val">get_solarposition</span>(times, lat, lon, altitude)<br><br>
+<span class="eq-label"># Step 2: Clear-sky irradiance (Ineichen model + Linke turbidity)</span><br>
+<span class="eq-var">clearsky</span> <span class="eq-op">=</span> loc.get_clearsky(times, model=<span class="eq-val">'ineichen'</span>, linke_turbidity=<span class="eq-val">linke_TL</span>)<br><br>
+<span class="eq-label"># Step 3: Cloud correction via kt (clearness index from satellite)</span><br>
+<span class="eq-var">GHI_eff</span> <span class="eq-op">=</span> clearsky[<span class="eq-val">'ghi'</span>] <span class="eq-op">×</span> kt_satellite  <span class="eq-label"># kt from INSAT-3DR Cloud OD → Heliosat-2</span><br><br>
+<span class="eq-label"># Step 4: Decompose GHI → DNI, DHI (Erbs/Dirint)</span><br>
+<span class="eq-var">dni</span>, <span class="eq-var">dhi</span> <span class="eq-op">=</span> pvlib.irradiance.<span class="eq-val">dirint</span>(GHI_eff, solar_pos[<span class="eq-val">'zenith'</span>], times)<br><br>
+<span class="eq-label"># Step 5: POA irradiance (Perez transposition for tilted plane)</span><br>
+<span class="eq-var">poa</span> <span class="eq-op">=</span> pvlib.irradiance.<span class="eq-val">get_total_irradiance</span>(tilt, azimuth, solar_pos, dni, dhi, GHI_eff)<br><br>
+<span class="eq-label"># Step 6: Cell temperature (Faiman model)</span><br>
+<span class="eq-var">T_cell</span> <span class="eq-op">=</span> pvlib.temperature.<span class="eq-val">faiman</span>(poa[<span class="eq-val">'poa_global'</span>], T_amb, wind_speed)<br><br>
+<span class="eq-label"># Step 7: DC power (Sandia PVWatts)</span><br>
+<span class="eq-var">P_dc</span> <span class="eq-op">=</span> η_panel <span class="eq-op">×</span> A_panel <span class="eq-op">×</span> poa[<span class="eq-val">'poa_global'</span>] <span class="eq-op">×</span> (1 <span class="eq-op">+</span> γ <span class="eq-op">×</span> (T_cell <span class="eq-op">−</span> <span class="eq-val">25</span>))<br><br>
+<span class="eq-label"># Step 8: AC power (inverter model: NREL CEC efficiency curve)</span><br>
+<span class="eq-var">P_ac</span> <span class="eq-op">=</span> pvlib.inverter.<span class="eq-val">sandia</span>(P_dc, V_dc, inverter_params) <span class="eq-op">×</span> f_soiling <span class="eq-op">×</span> f_age
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">KUSUM-C Feeder Registry (Top Substations by DRE Penetration)</div>
+          <span class="card-tag tag-solar">LIVE</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Substation / Feeder</th>
+                <th>Installed (MWp)</th>
+                <th>Metered</th>
+                <th>Proxy Coverage</th>
+                <th>Current Gen (MW)</th>
+                <th>Forecast T+1h</th>
+                <th>MAPE (7d)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Jodhpur 33kV F-07</td><td>48.2</td><td><span class="card-tag tag-ok">AMR</span></td><td>100%</td><td style="color:var(--solar)">41.7</td><td>43.1</td><td class="err-good">2.1%</td></tr>
+              <tr><td>Bikaner Rural F-12</td><td>62.5</td><td><span class="card-tag tag-warn">PARTIAL</span></td><td>67%</td><td style="color:var(--solar)">51.3</td><td>54.8</td><td class="err-mid">5.6%</td></tr>
+              <tr><td>Jaisalmer Solar Pk</td><td>120.0</td><td><span class="card-tag tag-ok">AMR</span></td><td>100%</td><td style="color:var(--solar)">104.2</td><td>107.9</td><td class="err-good">1.8%</td></tr>
+              <tr><td>Nagaur KUSUM F-03</td><td>18.4</td><td><span class="card-tag tag-alert">UNMETERED</span></td><td>0%</td><td style="color:var(--solar)">15.2 *</td><td>16.1</td><td class="err-bad">8.9%</td></tr>
+              <tr><td>Sikar Rooftop Cluster</td><td>8.1</td><td><span class="card-tag tag-warn">PARTIAL</span></td><td>45%</td><td style="color:var(--solar)">6.8</td><td>7.0</td><td class="err-mid">4.2%</td></tr>
+              <tr><td>Barmer KUSUM F-08</td><td>35.0</td><td><span class="card-tag tag-ok">AMR</span></td><td>100%</td><td style="color:var(--solar)">29.4</td><td>30.5</td><td class="err-good">2.4%</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:8px;font-size:10px;color:var(--text3);font-style:italic;padding:4px 12px">* Proxy estimate via INSAT-3DR + capacity density model. Confidence interval: ±9%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMAND TAB -->
+    <div id="tab-demand" class="tab-content">
+      <div class="tab-bar">
+        <div class="tab active">DEMAND DECOMPOSITION</div>
+        <div class="tab">AC PENETRATION MODEL</div>
+        <div class="tab">AGRICULTURE LOAD</div>
+      </div>
+
+      <div class="metrics-row">
+        <div class="metric-card load">
+          <div class="metric-label">Base Load</div>
+          <div class="metric-value" style="color:var(--text2);font-size:22px">2,140 <span class="metric-unit">MW</span></div>
+          <div class="metric-sub">35.3% of gross</div>
+        </div>
+        <div class="metric-card load">
+          <div class="metric-label">Cooling (AC)</div>
+          <div class="metric-value" style="color:var(--load);font-size:22px">1,820 <span class="metric-unit">MW</span></div>
+          <div class="metric-sub">30.0% · T_amb=41.2°C</div>
+        </div>
+        <div class="metric-card load">
+          <div class="metric-label">Agriculture</div>
+          <div class="metric-value" style="color:var(--accent4);font-size:22px">1,380 <span class="metric-unit">MW</span></div>
+          <div class="metric-sub">22.8% · Kharif season</div>
+        </div>
+        <div class="metric-card load">
+          <div class="metric-label">Industrial / HT</div>
+          <div class="metric-value" style="color:var(--accent5);font-size:22px">725 <span class="metric-unit">MW</span></div>
+          <div class="metric-sub">12.0% · scheduled</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Temperature–Load Relationship (Non-linear)</div>
+            <span class="card-tag tag-load">THRESHOLD ~24°C</span>
+          </div>
+          <canvas id="tempLoadChart" height="200"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">AC Penetration Growth Curve</div>
+            <span class="card-tag tag-warn">NON-STATIONARY</span>
+          </div>
+          <canvas id="acPenChart" height="200"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Cooling Load Model — Engineering Detail</div>
+          <span class="card-tag tag-load">PHYSICS-ML HYBRID</span>
+        </div>
+        <div class="grid-2">
+          <div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:8px;font-family:'IBM Plex Mono',monospace;letter-spacing:0.1em;text-transform:uppercase">Model Equation</div>
+            <div class="formula-block">
+L_cool(t) = N_AC(t) · P_rated · COP_adj<br>
+           · OccRate(h,dow) · f_thermal<br><br>
+N_AC(t) = N_0 · exp(r·t) + ε_survey(t)<br>
+<span class="formula-comment"># r ≈ 0.12/yr (Rajasthan 2019–2024)</span><br><br>
+COP_adj = COP_rated × (1 − 0.03·(T−25))<br>
+        × (1 − 0.005·(RH−50))<br><br>
+f_thermal = 1 − exp(−t/τ_thermal)<br>
+<span class="formula-comment"># τ_thermal ≈ 45 min (thermal mass delay)</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:8px;font-family:'IBM Plex Mono',monospace;letter-spacing:0.1em;text-transform:uppercase">Calibration Sources</div>
+            <div class="arch-item" style="margin-bottom:6px"><div class="arch-bullet" style="background:var(--load)"></div><div>NCRB consumer survey data (annual) → N_AC by substation zone</div></div>
+            <div class="arch-item" style="margin-bottom:6px"><div class="arch-bullet" style="background:var(--load)"></div><div>BEE star-rating distribution → average P_rated and COP_rated per zone</div></div>
+            <div class="arch-item" style="margin-bottom:6px"><div class="arch-bullet" style="background:var(--load)"></div><div>Smart meter 15-min data → OccRate(h,dow) occupancy profile per consumer segment</div></div>
+            <div class="arch-item" style="margin-bottom:6px"><div class="arch-bullet" style="background:var(--load)"></div><div>Building stock census (SECC) → thermal mass correction per ward</div></div>
+            <div class="arch-item" style="margin-bottom:6px"><div class="arch-bullet" style="background:var(--load)"></div><div>Quarterly recalibration via billing regression; Δ flagged if N_AC drift >5%</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NET DEMAND TAB -->
+    <div id="tab-net" class="tab-content">
+      <div class="tab-bar">
+        <div class="tab active">NET DEMAND SCHEDULE</div>
+        <div class="tab">UNCERTAINTY BANDS</div>
+        <div class="tab">DSM OPTIMIZATION</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Net Grid Demand — Day-Ahead Schedule (P10 / P50 / P90)</div>
+          <span class="card-tag tag-net">PROCUREMENT READY</span>
+        </div>
+        <canvas id="netDemandChart" height="220"></canvas>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Duck Curve Effect</div>
+            <span class="card-tag tag-warn">RAMP RISK</span>
+          </div>
+          <canvas id="duckChart" height="180"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">DSM Band Exposure</div>
+            <span class="card-tag tag-alert">₹ RISK</span>
+          </div>
+          <canvas id="dsmChart" height="180"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Ramp Rate Forecast</div>
+            <span class="card-tag tag-warn">MW/15min</span>
+          </div>
+          <canvas id="rampChart" height="180"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Error Propagation: Net Demand Uncertainty Budget</div>
+          <span class="card-tag tag-grid">MATH</span>
+        </div>
+        <div class="formula-block" style="margin:0">
+σ²(D_net) = σ²(D_gross) + σ²(P_DRE) − 2·ρ·σ(D_gross)·σ(P_DRE)<br><br>
+<span class="formula-comment"># ρ = corr(D_gross, P_DRE) via weather; typically 0.3–0.5 (same temperature driver)</span><br>
+<span class="formula-comment"># DRE variance: σ(P_DRE) ≈ 0.08·P_DRE (clear sky) → 0.18·P_DRE (cloudy)</span><br>
+<span class="formula-comment"># Cooling variance: σ(D_gross) includes temperature uncertainty: σ_T ≈ 1.2°C @ 24h</span><br><br>
+<span class="formula-comment"># Copula approach: Frank copula with θ calibrated from 24 months hourly data</span><br>
+<span class="formula-comment"># Output: joint distribution → schedule P50 ± asymmetric bands per DSM slab cost</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBSTATIONS TAB -->
+    <div id="tab-substations" class="tab-content">
+      <div class="tab-bar">
+        <div class="tab active">SUBSTATION GRID</div>
+        <div class="tab">SPATIAL MAP</div>
+        <div class="tab">FEEDER DETAILS</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Substation-Level Forecast Performance (Current Period)</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 70px 80px 80px 60px;gap:8px;padding:4px 12px 8px;border-bottom:1px solid var(--border)">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em">Substation</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-align:right;text-transform:uppercase">Net (MW)</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-align:right;text-transform:uppercase">Fcst (MW)</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-align:right;text-transform:uppercase">DRE%</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-align:right;text-transform:uppercase">MAPE</div>
+        </div>
+        <div id="substationList"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Aggregation Hierarchy</div>
+          <span class="card-tag tag-grid">TOPOLOGY-AWARE</span>
+        </div>
+        <div class="arch-item">
+          <div style="font-size:10px;color:var(--text2);line-height:1.8;font-family:'IBM Plex Mono',monospace">
+            <span style="color:var(--accent)">STATE DISCOM</span> → <span style="color:var(--text3)">Aggregated Net Demand (SLDC schedule)</span><br>
+            &nbsp;&nbsp;&nbsp;└── <span style="color:var(--accent2)">CIRCLE / ZONE</span> (4–6 per DISCOM) → <span style="color:var(--text3)">Circle-level procurement block</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span style="color:var(--solar)">132/220 kV SUBSTATION</span> (transmission injection point)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span style="color:var(--net)">33/11 kV SUBSTATION</span> → <span style="color:var(--text3)">Primary forecast unit</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span style="color:var(--accent4)">11 kV FEEDER</span> → <span style="color:var(--text3)">DRE-rich feeders forecast individually</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span style="color:var(--accent5)">DISTRIBUTION TRANSFORMER</span> → <span style="color:var(--text3)">Only where AMR coverage &gt;80%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VALIDATION TAB -->
+    <div id="tab-validation" class="tab-content">
+      <div class="tab-bar">
+        <div class="tab active">MODEL PERFORMANCE</div>
+        <div class="tab">BACKTEST RESULTS</div>
+        <div class="tab">BENCHMARK</div>
+      </div>
+
+      <div class="horizon-grid">
+        <div class="horizon-card">
+          <div class="hc-horizon">15-min ahead</div>
+          <div class="hc-mape">1.2%</div>
+          <div class="hc-desc">RMSE: 52 MW · Bias: +0.3%</div>
+        </div>
+        <div class="horizon-card">
+          <div class="hc-horizon">1-hour ahead</div>
+          <div class="hc-mape">1.9%</div>
+          <div class="hc-desc">RMSE: 84 MW · Bias: +0.5%</div>
+        </div>
+        <div class="horizon-card">
+          <div class="hc-horizon">4-hour ahead</div>
+          <div class="hc-mape">2.6%</div>
+          <div class="hc-desc">RMSE: 118 MW · Bias: +0.8%</div>
+        </div>
+        <div class="horizon-card">
+          <div class="hc-horizon">Day-ahead (D+1)</div>
+          <div class="hc-mape">3.8%</div>
+          <div class="hc-desc">RMSE: 173 MW · Bias: +1.1%</div>
+        </div>
+        <div class="horizon-card">
+          <div class="hc-horizon">48-hour ahead</div>
+          <div class="hc-mape">4.9%</div>
+          <div class="hc-desc">RMSE: 224 MW · Bias: +1.8%</div>
+        </div>
+        <div class="horizon-card">
+          <div class="hc-horizon">Week-ahead (D+7)</div>
+          <div class="hc-mape">6.1%</div>
+          <div class="hc-desc">RMSE: 281 MW · Bias: +2.3%</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Backtest MAPE Distribution (Jan 2024 – Apr 2026, 15-min, Net Demand)</div>
+          <span class="card-tag tag-net">N=63,072 INTERVALS</span>
+        </div>
+        <canvas id="mapeDistChart" height="180"></canvas>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Model Ensemble Weights (Day-ahead)</div>
+          </div>
+          <canvas id="ensembleChart" height="200"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">DSM Penalty Savings (vs Naïve Forecast)</div>
+          </div>
+          <canvas id="dsmSavingsChart" height="200"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Model Stack & Training Spec</div>
+          <span class="card-tag tag-grid">ARCHITECTURE</span>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr><th>Model</th><th>Role</th><th>Horizon</th><th>Features</th><th>MAPE (OOS)</th><th>Weight</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>PatchTST (128-patch)</td><td>Primary intra-day</td><td>1–24h</td><td>Weather+Calendar+Lag</td><td class="err-good">2.1%</td><td>0.35</td></tr>
+            <tr><td>TFT (Temporal Fusion)</td><td>Multi-horizon</td><td>1–168h</td><td>All covariates</td><td class="err-mid">3.6%</td><td>0.25</td></tr>
+            <tr><td>XGBoost + Online Update</td><td>Short-term correction</td><td>15min–4h</td><td>Residual+Weather</td><td class="err-good">1.4%</td><td>0.20</td></tr>
+            <tr><td>PVLib Physics</td><td>DRE baseline</td><td>All</td><td>GHI+Temperature</td><td class="err-mid">4.2%</td><td>0.15</td></tr>
+            <tr><td>SARIMA-X (baseline)</td><td>Fallback</td><td>All</td><td>Calendar+Temp</td><td class="err-bad">7.8%</td><td>0.05</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- RIGHT PANEL -->
+  <aside class="right-panel">
+
+    <div class="panel-section">
+      <div class="panel-title">⚡ Live Alerts</div>
+      <div class="alert-item danger">
+        <div class="alert-time">14:32 IST</div>
+        Net ramp +287 MW forecast @ 17:30–18:00. Evening AC surge + solar falloff. Notify SLDC.
+      </div>
+      <div class="alert-item warn">
+        <div class="alert-time">14:18 IST</div>
+        Nagaur KUSUM F-03: AMR offline >6h. Using satellite proxy. Confidence ↓
+      </div>
+      <div class="alert-item warn">
+        <div class="alert-time">13:55 IST</div>
+        Day-ahead NWP ensemble spread: GHI uncertainty ±18%. DSM band II risk elevated.
+      </div>
+      <div class="alert-item ok">
+        <div class="alert-time">13:30 IST</div>
+        All 6 critical 33kV substations: MAPE within SLA target (≤3.5%).
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-title">🌡 Weather Intelligence</div>
+      <div class="weather-row">
+        <div class="weather-label">TEMPERATURE</div>
+        <div class="weather-val" style="color:var(--load)">41.2°C</div>
+      </div>
+      <div class="weather-row">
+        <div class="weather-label">GHI (W/m²)</div>
+        <div class="weather-val" style="color:var(--solar)">847</div>
+      </div>
+      <div class="weather-row">
+        <div class="weather-label">CLOUD COVER</div>
+        <div class="weather-val">12%</div>
+      </div>
+      <div class="weather-row">
+        <div class="weather-label">WIND (m/s)</div>
+        <div class="weather-val">4.2</div>
+      </div>
+      <div class="weather-row">
+        <div class="weather-label">HUMIDITY (%)</div>
+        <div class="weather-val">18%</div>
+      </div>
+      <div class="weather-row">
+        <div class="weather-label">DUST/AOD</div>
+        <div class="weather-val" style="color:var(--warn)">0.42 HIGH</div>
+      </div>
+      <div class="weather-row">
+        <div class="weather-label">LINKE TURB.</div>
+        <div class="weather-val">4.8</div>
+      </div>
+      <div class="weather-row">
+        <div class="weather-label">NWP SOURCE</div>
+        <div class="weather-val" style="font-size:10px">NCUM+WRF</div>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-title">📊 Horizon MAPE</div>
+      <div class="horizon-card" style="margin-bottom:6px">
+        <div class="hc-horizon">DRE Generation</div>
+        <div class="hc-mape" style="font-size:16px">3.2%</div>
+        <div class="hc-desc">Rooftop: 4.1% · KUSUM: 2.8%</div>
+      </div>
+      <div class="horizon-card">
+        <div class="hc-horizon">Net Grid Demand</div>
+        <div class="hc-mape" style="font-size:16px">1.9%</div>
+        <div class="hc-desc">T+1h · 4,218 MW current</div>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-title">🤖 Active Models</div>
+      <div style="padding: 4px 0">
+        <div class="model-badge"><span style="color:var(--net)">●</span> PatchTST v2.1</div>
+        <div class="model-badge"><span style="color:var(--net)">●</span> TFT v1.4</div>
+        <div class="model-badge"><span style="color:var(--net)">●</span> XGBoost Online</div>
+        <div class="model-badge"><span style="color:var(--net)">●</span> PVLib 0.10.3</div>
+        <div class="model-badge"><span style="color:var(--warn)">●</span> SARIMA-X fallback</div>
+        <div class="model-badge"><span style="color:var(--net)">●</span> WRF 3km NWP</div>
+        <div class="model-badge"><span style="color:var(--net)">●</span> Heliosat-2 GHI</div>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-title">📋 Procurement Summary</div>
+      <div class="weather-row">
+        <div class="weather-label">SCHEDULED (D+1)</div>
+        <div class="weather-val" style="color:var(--accent)">4,380 MW</div>
+      </div>
+      <div class="weather-row">
+        <div class="weather-label">FORECAST P50</div>
+        <div class="weather-val" style="color:var(--net)">4,310 MW</div>
+      </div>
+      <div class="weather-row">
+        <div class="weather-label">FORECAST P90</div>
+        <div class="weather-val">4,520 MW</div>
+      </div>
+      <div class="weather-row">
+        <div class="weather-label">FORECAST P10</div>
+        <div class="weather-val">4,090 MW</div>
+      </div>
+      <div class="weather-row">
+        <div class="weather-label">DSM BAND RISK</div>
+        <div class="weather-val" style="color:var(--warn)">BAND II</div>
+      </div>
+      <div class="weather-row">
+        <div class="weather-label">RECOMMENDED REVUP</div>
+        <div class="weather-val" style="color:var(--net)">+70 MW</div>
+      </div>
+    </div>
+
+  </aside>
+
+</div>
+
+<script>
+// ─── DATA GENERATORS ───────────────────────────────────────────────
+
+function generateTimeLabels(start, end, stepMin) {
+  const labels = [];
+  let h = start;
+  while (h <= end) {
+    const hh = Math.floor(h);
+    const mm = Math.round((h - hh) * 60);
+    labels.push(`${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`);
+    h += stepMin / 60;
+  }
+  return labels;
+}
+
+// Main time series (00:00 to current ~14:30 + next 6h forecast)
+const mainLabels = generateTimeLabels(0, 20.5, 30);
+const n = mainLabels.length;
+
+function solarProfile(i, n) {
+  // Sunrise ~6am, peak ~12-1pm, dusk ~7pm
+  const h = i / n * 20.5;
+  if (h < 6 || h > 19) return 0;
+  const peak = Math.sin(Math.PI * (h - 6) / 13);
+  const cloud = 1 - 0.05 * Math.sin(h * 2.3) - 0.02 * Math.random();
+  return Math.max(0, peak * cloud);
+}
+
+// Generate data arrays
+const grossLoad = mainLabels.map((_, i) => {
+  const h = i / n * 20.5;
+  const base = 4200 + 500 * Math.sin(Math.PI * (h - 6) / 12);
+  const ac = h > 10 ? 1200 * Math.pow(Math.max(0, h - 10) / 8, 0.7) * (1 - 0.3 * solarProfile(i, n)) : 0;
+  return Math.round(base + ac + (Math.random() - 0.5) * 80);
+});
+
+const dreGen = mainLabels.map((_, i) => {
+  const sp = solarProfile(i, n);
+  const rooftop = Math.round(sp * 620 + (Math.random() - 0.5) * 20);
+  const kusum = Math.round(sp * 1220 + (Math.random() - 0.5) * 40);
+  return Math.max(0, rooftop + kusum);
+});
+
+const netDemand = grossLoad.map((g, i) => Math.max(0, g - dreGen[i]));
+
+// Forecast (dotted line) — slightly different
+const forecastNet = netDemand.map((v, i) => {
+  return Math.round(v * (1 + (Math.random() - 0.5) * 0.04));
+});
+
+// ─── CHART HELPERS ─────────────────────────────────────────────────
+
+const C = {
+  solar: '#ffd32a',
+  grid: '#00d4ff',
+  net: '#39d353',
+  load: '#ff6b35',
+  accent: '#00d4ff',
+  purple: '#b48eff',
+  bg: '#07090f',
+  surface: '#0d1117',
+  surface2: '#131a24',
+  border: '#1e2d3d',
+  text2: '#94a3b8',
+  text3: '#4a6080',
+  warn: '#ffa502',
+  danger: '#ff4757',
+};
+
+function baseChartOptions(opts = {}) {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: { duration: 600, easing: 'easeOutQuart' },
+    plugins: {
+      legend: {
+        display: opts.legend !== false,
+        labels: {
+          color: C.text2,
+          font: { family: "'IBM Plex Mono', monospace", size: 10 },
+          boxWidth: 10, padding: 16,
+        }
+      },
+      tooltip: {
+        backgroundColor: C.surface,
+        borderColor: C.border,
+        borderWidth: 1,
+        titleColor: C.text2,
+        bodyColor: C.text2,
+        titleFont: { family: "'IBM Plex Mono', monospace", size: 10 },
+        bodyFont: { family: "'IBM Plex Mono', monospace", size: 10 },
+      }
+    },
+    scales: {
+      x: {
+        grid: { color: C.border, lineWidth: 0.5 },
+        ticks: { color: C.text3, font: { family: "'IBM Plex Mono', monospace", size: 9 }, maxTicksLimit: 12 },
+        border: { color: C.border },
+      },
+      y: {
+        grid: { color: C.border, lineWidth: 0.5 },
+        ticks: { color: C.text3, font: { family: "'IBM Plex Mono', monospace", size: 9 }, maxTicksLimit: 6 },
+        border: { color: C.border },
+      }
+    },
+    elements: { point: { radius: 0, hoverRadius: 3 }, line: { tension: 0.35 } }
+  };
+}
+
+function createGradient(ctx, color, alpha1 = 0.3, alpha2 = 0.0) {
+  const g = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+  g.addColorStop(0, color.replace(')', `,${alpha1})`).replace('rgb', 'rgba'));
+  g.addColorStop(1, color.replace(')', `,${alpha2})`).replace('rgb', 'rgba'));
+  return g;
+}
+
+function hexGrad(ctx, hex, a1 = 0.25, a2 = 0.0) {
+  const g = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+  g.addColorStop(0, hex + Math.round(a1 * 255).toString(16).padStart(2,'0'));
+  g.addColorStop(1, hex + Math.round(a2 * 255).toString(16).padStart(2,'0'));
+  return g;
+}
+
+// ─── LOAD CHARTJS ──────────────────────────────────────────────────
+
+const script = document.createElement('script');
+script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';
+script.onload = initCharts;
+document.head.appendChild(script);
+
+function initCharts() {
+
+  // ── MAIN CHART ──
+  const mainCtx = document.getElementById('mainChart').getContext('2d');
+  new Chart(mainCtx, {
+    type: 'line',
+    data: {
+      labels: mainLabels,
+      datasets: [
+        {
+          label: 'Gross Load',
+          data: grossLoad,
+          borderColor: C.load,
+          borderWidth: 1.5,
+          backgroundColor: hexGrad(mainCtx, C.load),
+          fill: true,
+        },
+        {
+          label: 'DRE Generation',
+          data: dreGen,
+          borderColor: C.solar,
+          borderWidth: 1.5,
+          backgroundColor: hexGrad(mainCtx, C.solar, 0.2, 0),
+          fill: true,
+        },
+        {
+          label: 'Net Demand (Actual)',
+          data: netDemand,
+          borderColor: C.net,
+          borderWidth: 2,
+          backgroundColor: hexGrad(mainCtx, C.net, 0.15, 0),
+          fill: true,
+        },
+        {
+          label: 'Net Demand (Forecast)',
+          data: forecastNet,
+          borderColor: C.grid,
+          borderWidth: 1.5,
+          borderDash: [4, 3],
+          backgroundColor: 'transparent',
+          fill: false,
+        }
+      ]
+    },
+    options: baseChartOptions({ legend: true }),
+  });
+
+  // ── DRE CHART ──
+  const dreCtx = document.getElementById('dreChart').getContext('2d');
+  const rooftop = mainLabels.map((_, i) => Math.round(Math.max(0, solarProfile(i, n) * 620)));
+  const kusum = mainLabels.map((_, i) => Math.round(Math.max(0, solarProfile(i, n) * 1224)));
+  new Chart(dreCtx, {
+    type: 'line',
+    data: {
+      labels: mainLabels,
+      datasets: [
+        { label: 'KUSUM Feeders', data: kusum, borderColor: '#ffaa00', borderWidth: 1.5, backgroundColor: '#ffaa0020', fill: true },
+        { label: 'Rooftop Solar', data: rooftop, borderColor: C.solar, borderWidth: 1.5, backgroundColor: '#ffd32a15', fill: true },
+      ]
+    },
+    options: { ...baseChartOptions({ legend: true }), scales: { x: baseChartOptions().scales.x, y: { ...baseChartOptions().scales.y, title: { display: true, text: 'MW', color: C.text3, font: { size: 9 } } } } }
+  });
+
+  // ── COOLING CHART ──
+  const coolCtx = document.getElementById('coolingChart').getContext('2d');
+  const tempProfile = mainLabels.map((_, i) => {
+    const h = i / n * 20.5;
+    return Math.round(28 + 13 * Math.sin(Math.PI * (h - 5) / 13) + (Math.random() - 0.5) * 0.5);
+  });
+  const coolLoad = tempProfile.map(t => Math.round(Math.max(0, Math.pow(Math.max(0, t - 24), 1.6) * 28)));
+  new Chart(coolCtx, {
+    type: 'line',
+    data: {
+      labels: mainLabels,
+      datasets: [
+        { label: 'Temperature (°C)', data: tempProfile, borderColor: '#ff6b35', borderWidth: 1.5, yAxisID: 'y1', backgroundColor: 'transparent', fill: false },
+        { label: 'AC Load (MW)', data: coolLoad, borderColor: '#ffd32a', borderWidth: 1.5, yAxisID: 'y', backgroundColor: '#ffd32a15', fill: true },
+      ]
+    },
+    options: {
+      ...baseChartOptions(),
+      scales: {
+        x: baseChartOptions().scales.x,
+        y: { ...baseChartOptions().scales.y, title: { display: true, text: 'MW', color: C.text3, font: { size: 9 } } },
+        y1: { position: 'right', grid: { drawOnChartArea: false }, ticks: { color: C.text3, font: { family: "'IBM Plex Mono',monospace", size: 9 } }, border: { color: C.border }, title: { display: true, text: '°C', color: C.text3, font: { size: 9 } } }
+      }
+    }
+  });
+
+  // ── NET DEMAND D+1 CHART ──
+  const netLabels = generateTimeLabels(0, 24, 30);
+  const nm = netLabels.length;
+  const netP50 = netLabels.map((_, i) => {
+    const h = i / nm * 24;
+    const base = 3800 + 600 * Math.sin(Math.PI * (h - 6) / 13);
+    const duck = h > 16 ? 500 * Math.pow((h - 16) / 6, 1.5) : 0;
+    return Math.round(base + duck + (Math.random() - 0.5) * 100);
+  });
+  const netP10 = netP50.map(v => Math.round(v * 0.93));
+  const netP90 = netP50.map(v => Math.round(v * 1.07));
+  const netCtx = document.getElementById('netDemandChart').getContext('2d');
+  new Chart(netCtx, {
+    type: 'line',
+    data: {
+      labels: netLabels,
+      datasets: [
+        { label: 'P90 (Upper)', data: netP90, borderColor: '#00d4ff40', borderWidth: 1, borderDash: [3, 2], backgroundColor: '#00d4ff10', fill: '+1' },
+        { label: 'P50 (Schedule)', data: netP50, borderColor: C.net, borderWidth: 2, backgroundColor: '#39d35315', fill: false },
+        { label: 'P10 (Lower)', data: netP10, borderColor: '#00d4ff40', borderWidth: 1, borderDash: [3, 2], backgroundColor: '#00d4ff10', fill: '-1' },
+      ]
+    },
+    options: baseChartOptions({ legend: true })
+  });
+
+  // ── DUCK CURVE ──
+  const duckLabels = generateTimeLabels(0, 23, 60);
+  const duckNet = duckLabels.map((_, i) => {
+    const h = i;
+    const base = 3500 + 400 * Math.sin(Math.PI * (h - 5) / 13);
+    const dreEffect = -Math.max(0, 1847 * Math.sin(Math.PI * (h - 6) / 13));
+    return Math.round(Math.max(2000, base + dreEffect + (h > 16 ? 600 * Math.pow((h - 16) / 6, 1.3) : 0)));
+  });
+  const duckCtx = document.getElementById('duckChart').getContext('2d');
+  new Chart(duckCtx, {
+    type: 'line',
+    data: {
+      labels: duckLabels,
+      datasets: [{ label: 'Net Demand (duck curve)', data: duckNet, borderColor: C.net, borderWidth: 2, backgroundColor: '#39d35312', fill: true }]
+    },
+    options: { ...baseChartOptions({ legend: false }), scales: { x: baseChartOptions().scales.x, y: { ...baseChartOptions().scales.y, min: 2000 } } }
+  });
+
+  // ── DSM BANDS ──
+  const dsmLabels = ['Band I\n>3%', 'Band II\n1.5-3%', 'Band III\n0.5-1.5%', 'Band IV\n<0.5%'];
+  const dsmCtx = document.getElementById('dsmChart').getContext('2d');
+  new Chart(dsmCtx, {
+    type: 'bar',
+    data: {
+      labels: dsmLabels,
+      datasets: [
+        { label: 'Hrs with naïve fcst', data: [18, 42, 105, 71], backgroundColor: '#ff475740', borderColor: C.danger, borderWidth: 1 },
+        { label: 'Hrs with GRIDMIND', data: [3, 14, 82, 137], backgroundColor: '#39d35340', borderColor: C.net, borderWidth: 1 },
+      ]
+    },
+    options: { ...baseChartOptions({ legend: true }), scales: { x: { ...baseChartOptions().scales.x, ticks: { ...baseChartOptions().scales.x.ticks, maxTicksLimit: 4 } }, y: baseChartOptions().scales.y } }
+  });
+
+  // ── RAMP CHART ──
+  const rampLabels = generateTimeLabels(14.5, 20, 30);
+  const ramps = rampLabels.map((_, i) => {
+    const h = 14.5 + i * 0.5;
+    const solarRamp = h > 16 ? -(1847 * 0.12 * (h - 16)) : 0;
+    const acRamp = h > 17 ? (800 * 0.2 * (h - 17)) : 0;
+    return Math.round(solarRamp + acRamp + (Math.random() - 0.5) * 30);
+  });
+  const rampCtx = document.getElementById('rampChart').getContext('2d');
+  new Chart(rampCtx, {
+    type: 'bar',
+    data: {
+      labels: rampLabels,
+      datasets: [{
+        label: 'Net Load Ramp (MW/30min)',
+        data: ramps,
+        backgroundColor: ramps.map(v => v > 150 ? '#ff475770' : v > 80 ? '#ffa50270' : '#39d35340'),
+        borderColor: ramps.map(v => v > 150 ? C.danger : v > 80 ? C.warn : C.net),
+        borderWidth: 1,
+      }]
+    },
+    options: { ...baseChartOptions({ legend: false }), scales: { x: baseChartOptions().scales.x, y: { ...baseChartOptions().scales.y, title: { display: true, text: 'MW/30min', color: C.text3, font: { size: 9 } } } } }
+  });
+
+  // ── TEMP-LOAD SCATTER ──
+  const temps = Array.from({ length: 80 }, () => 20 + Math.random() * 22);
+  const loadsFromTemp = temps.map(t => ({
+    x: parseFloat(t.toFixed(1)),
+    y: parseFloat((Math.max(0, 2800 + Math.pow(Math.max(0, t - 24), 1.6) * 28 + (Math.random() - 0.5) * 200)).toFixed(0))
+  }));
+  const tlCtx = document.getElementById('tempLoadChart').getContext('2d');
+  new Chart(tlCtx, {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: 'Gross Load vs Temperature',
+        data: loadsFromTemp,
+        backgroundColor: '#ff6b3560',
+        borderColor: '#ff6b35',
+        borderWidth: 0.5,
+        pointRadius: 3,
+      }]
+    },
+    options: {
+      ...baseChartOptions({ legend: false }),
+      scales: {
+        x: { ...baseChartOptions().scales.x, title: { display: true, text: 'Temperature (°C)', color: C.text3, font: { size: 9 } } },
+        y: { ...baseChartOptions().scales.y, title: { display: true, text: 'Gross Load (MW)', color: C.text3, font: { size: 9 } } }
+      }
+    }
+  });
+
+  // ── AC PENETRATION ──
+  const acYears = ['2018','2019','2020','2021','2022','2023','2024','2025','2026'];
+  const acPen = [18, 22, 24, 28, 34, 40, 46, 53, 58];
+  const acFcst = [null,null,null,null,null,null,null,null,58,64,71,79];
+  const acCtx = document.getElementById('acPenChart').getContext('2d');
+  new Chart(acCtx, {
+    type: 'line',
+    data: {
+      labels: ['2018','2019','2020','2021','2022','2023','2024','2025','2026','2027','2028','2029'],
+      datasets: [
+        { label: 'Actual penetration (%)', data: [...acPen, null, null, null], borderColor: C.load, borderWidth: 2, backgroundColor: '#ff6b3520', fill: true },
+        { label: 'Projected (±95% CI)', data: acFcst, borderColor: '#ff6b3580', borderWidth: 1.5, borderDash: [4, 3], backgroundColor: '#ff6b3510', fill: false },
+      ]
+    },
+    options: { ...baseChartOptions({ legend: true }), scales: { x: baseChartOptions().scales.x, y: { ...baseChartOptions().scales.y, title: { display: true, text: '% Households', color: C.text3, font: { size: 9 } } } } }
+  });
+
+  // ── GHI CHART ──
+  const ghiLabels = generateTimeLabels(0, 24, 60);
+  const ghiP50 = ghiLabels.map((_, i) => {
+    const h = i;
+    return Math.round(Math.max(0, 1000 * Math.sin(Math.PI * (h - 5.5) / 14) * (1 - 0.05 * Math.random())));
+  });
+  const ghiCtx = document.getElementById('ghiChart').getContext('2d');
+  new Chart(ghiCtx, {
+    type: 'line',
+    data: {
+      labels: ghiLabels,
+      datasets: [
+        { label: 'P90 GHI', data: ghiP50.map(v => Math.round(v * 1.12)), borderColor: '#ffd32a30', borderWidth: 1, fill: '+1', backgroundColor: '#ffd32a10', borderDash: [3, 2] },
+        { label: 'P50 GHI (W/m²)', data: ghiP50, borderColor: C.solar, borderWidth: 2, fill: false },
+        { label: 'P10 GHI', data: ghiP50.map(v => Math.round(v * 0.88)), borderColor: '#ffd32a30', borderWidth: 1, fill: '-1', backgroundColor: '#ffd32a10', borderDash: [3, 2] },
+      ]
+    },
+    options: baseChartOptions({ legend: true })
+  });
+
+  // ── DRE DETAIL ──
+  const dreDetailCtx = document.getElementById('dreDetailChart').getContext('2d');
+  const dreLabels48 = generateTimeLabels(0, 47, 60);
+  const dreActual = dreLabels48.slice(0, 25).map((_, i) => Math.round(Math.max(0, solarProfile(i, 48) * 1847)));
+  const dreFcst = dreLabels48.map((_, i) => Math.round(Math.max(0, solarProfile(i, 48) * 1847 * (1 + (Math.random() - 0.5) * 0.08))));
+  new Chart(dreDetailCtx, {
+    type: 'line',
+    data: {
+      labels: dreLabels48,
+      datasets: [
+        { label: 'DRE Actual', data: [...dreActual, ...Array(23).fill(null)], borderColor: C.solar, borderWidth: 2, backgroundColor: '#ffd32a15', fill: true },
+        { label: 'DRE Forecast', data: dreFcst, borderColor: '#ffaa00', borderWidth: 1.5, borderDash: [4, 2], backgroundColor: 'transparent', fill: false },
+      ]
+    },
+    options: baseChartOptions({ legend: true })
+  });
+
+  // ── MAPE DISTRIBUTION ──
+  const mapeCtx = document.getElementById('mapeDistChart').getContext('2d');
+  const mapeBins = ['0-1%','1-2%','2-3%','3-4%','4-5%','5-7%','7-10%','>10%'];
+  const mapeCounts = [18240, 22480, 12310, 5840, 2870, 980, 280, 72];
+  new Chart(mapeCtx, {
+    type: 'bar',
+    data: {
+      labels: mapeBins,
+      datasets: [{ label: 'Frequency', data: mapeCounts, backgroundColor: mapeCounts.map((_, i) => ['#39d353','#39d353','#00d4ff','#ffd32a','#ffa502','#ff6b35','#ff4757','#b00020'][i] + '70'), borderColor: mapeCounts.map((_, i) => ['#39d353','#39d353','#00d4ff','#ffd32a','#ffa502','#ff6b35','#ff4757','#b00020'][i]), borderWidth: 1 }]
+    },
+    options: { ...baseChartOptions({ legend: false }), scales: { x: baseChartOptions().scales.x, y: { ...baseChartOptions().scales.y, title: { display: true, text: 'Intervals', color: C.text3, font: { size: 9 } } } } }
+  });
+
+  // ── ENSEMBLE PIE ──
+  const ensCtx = document.getElementById('ensembleChart').getContext('2d');
+  new Chart(ensCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['PatchTST', 'TFT', 'XGBoost Online', 'PVLib Physics', 'SARIMA-X'],
+      datasets: [{ data: [35, 25, 20, 15, 5], backgroundColor: [C.net+'cc', C.grid+'cc', C.solar+'cc', C.purple+'cc', C.text3+'cc'], borderColor: C.surface, borderWidth: 2 }]
+    },
+    options: { ...baseChartOptions({ legend: true }), cutout: '60%', scales: {} }
+  });
+
+  // ── DSM SAVINGS ──
+  const dsmSavingsCtx = document.getElementById('dsmSavingsChart').getContext('2d');
+  const months = ['Nov','Dec','Jan','Feb','Mar','Apr'];
+  new Chart(dsmSavingsCtx, {
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [
+        { label: 'Before (₹L)', data: [42, 38, 51, 47, 63, 58], backgroundColor: '#ff475740', borderColor: C.danger, borderWidth: 1 },
+        { label: 'After GRIDMIND (₹L)', data: [8, 7, 11, 9, 13, 12], backgroundColor: '#39d35340', borderColor: C.net, borderWidth: 1 },
+      ]
+    },
+    options: { ...baseChartOptions({ legend: true }), scales: { x: baseChartOptions().scales.x, y: { ...baseChartOptions().scales.y, title: { display: true, text: '₹ Lakhs', color: C.text3, font: { size: 9 } } } } }
+  });
+
+  // ── SUBSTATION LIST ──
+  const substations = [
+    { name: 'Jodhpur South 33kV', net: 312, fcst: 318, dre: 38, mape: 1.8, status: 'good' },
+    { name: 'Bikaner East 33kV', net: 287, fcst: 301, dre: 31, mape: 4.9, status: 'bad' },
+    { name: 'Jaisalmer 33kV', net: 198, fcst: 201, dre: 52, mape: 1.2, status: 'good' },
+    { name: 'Nagaur Central 33kV', net: 241, fcst: 256, dre: 22, mape: 6.2, status: 'bad' },
+    { name: 'Sikar 33kV', net: 178, fcst: 181, dre: 18, mape: 1.7, status: 'good' },
+    { name: 'Barmer 33kV', net: 265, fcst: 270, dre: 41, mape: 1.9, status: 'good' },
+    { name: 'Ajmer 33kV', net: 392, fcst: 399, dre: 14, mape: 1.8, status: 'good' },
+    { name: 'Kota 33kV', net: 445, fcst: 463, dre: 9, mape: 4.0, status: 'mid' },
+    { name: 'Udaipur 33kV', net: 334, fcst: 338, dre: 12, mape: 1.2, status: 'good' },
+    { name: 'Alwar 33kV', net: 289, fcst: 301, dre: 8, mape: 4.1, status: 'mid' },
+  ];
+
+  const subList = document.getElementById('substationList');
+  substations.forEach(s => {
+    const row = document.createElement('div');
+    row.className = 'sub-row';
+    const errClass = s.mape < 2.5 ? 'err-good' : s.mape < 5 ? 'err-mid' : 'err-bad';
+    row.innerHTML = `
+      <div class="sub-name">${s.name}</div>
+      <div class="sub-val">${s.net}</div>
+      <div class="sub-val">${s.fcst}</div>
+      <div class="sub-val">${s.dre}%</div>
+      <div class="sub-err ${errClass}">${s.mape.toFixed(1)}%</div>
+    `;
+    subList.appendChild(row);
+  });
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────────────
+
+function showTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const t = document.getElementById('tab-' + tab);
+  if (t) t.classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+function switchMainTab(el, section) {
+  el.closest('.tab-bar').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ─── LIVE CLOCK ──────────────────────────────────────────────────
+
+function updateClock() {
+  const now = new Date();
+  const ist = new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
+  const h = ist.getUTCHours().toString().padStart(2, '0');
+  const m = ist.getUTCMinutes().toString().padStart(2, '0');
+  const s = ist.getUTCSeconds().toString().padStart(2, '0');
+  document.querySelectorAll('.status-pill').forEach(p => {
+    if (p.textContent.includes('IST')) {
+      p.innerHTML = `<div class="status-dot"></div>LIVE · IST ${h}:${m}:${s}`;
+    }
+  });
+}
+setInterval(updateClock, 1000);
+</script>
+</body>
+</html>
